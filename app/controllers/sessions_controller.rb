@@ -67,7 +67,7 @@ class SessionsController < ApplicationController
            end
     return false unless resp
     resp[:state] == 'active'
-  rescue Octokit::Error
+  rescue Octokit::NotFound
     false
   end
 end
