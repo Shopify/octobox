@@ -11,42 +11,32 @@ module StubHelper
     end
   end
 
-  def stub_organization_membership_request(organization_id:, successful:)
-    orgs_url = %r{https://api.github.com/user/orgs}
-
-    headers          = { 'Content-Type' => 'application/json', 'Cache-Control' => 'no-cach, no-store' }
-    default_response = { headers: headers, status: 200 }
-
-    response = if successful 
-      default_response.merge(
-        body: [
-          { id: organization_id }
-        ].to_json
-      )
-    else
-      default_response
-    end
-
-    stub_request(:get, orgs_url).to_return(response)
+  def stub_organization_membership_request(organization_id:, user:, successful:)
+    stub_membership_request(resource: 'orgs', id: organization_id, user: user, successful: successful)
   end
 
-  def stub_team_membership_request(team_id:, successful:)
-    team_url = %r{https://api.github.com/user/teams}
+  def stub_team_membership_request(team_id:, user:, successful:)
+    stub_membership_request(resource: 'teams', id: team_id, user: user, successful: successful)
+  end
 
-    headers          = { 'Content-Type' => 'application/json', 'Cache-Control' => 'no-cach, no-store' }
-    default_response = { headers: headers, status: 200 }
+  def stub_membership_request(resource:, id:, user:, successful:)
+    url = %r{https://api.github.com/#{resource}/#{id}/memberships/#{user}}
 
-    response = if successful 
-      default_response.merge(
-        body: [
-          { id: team_id }
-        ].to_json
+    headers          = { 'Content-Type' => 'application/json', 'Cache-Control' => 'no-cache, no-store' }
+    response = { headers: headers }
+
+    if successful
+      response.merge!(
+        status: 200,
+        body: { 'state' => 'active' }.to_json
       )
     else
-      default_response
+      response.merge!(
+        status: 404,
+        body: {}.to_json
+      )
     end
-
-    stub_request(:get, team_url).to_return(response)
+    stub_request(:get, url).to_return(response)
   end
 
   def stub_notifications_request(url: nil, body: nil, extra_headers: {})
