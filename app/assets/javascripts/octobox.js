@@ -126,10 +126,12 @@ var Octobox = (function() {
     })
   };
 
-  var toggleArchive = function(button_selected) {
+  var toggleArchive = function() {
     if (getDisplayedRows().length === 0) return;
+
     var cssClass, value;
-    if (button_selected.hasClass("archive_selected")) {
+
+    if ( $(".archive_toggle").hasClass("archive_selected") ) {
       cssClass = ".archive"
       value = true
     } else {
