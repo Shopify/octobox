@@ -44,7 +44,7 @@ module Octobox
     attr_writer :github_app
 
     def fetch_subject
-      @fetch_subject || env_boolean('FETCH_SUBJECT')
+      @fetch_subject || (ENV['FETCH_SUBJECT'].try(:downcase) == "true")
     end
     attr_writer :fetch_subject
 
@@ -53,32 +53,44 @@ module Octobox
     end
 
     def personal_access_tokens_enabled
-      @personal_access_tokens_enabled || env_boolean('PERSONAL_ACCESS_TOKENS_ENABLED')
+      @personal_access_tokens_enabled || ENV['PERSONAL_ACCESS_TOKENS_ENABLED'].present?
     end
     attr_writer :personal_access_tokens_enabled
 
     def minimum_refresh_interval
-      @minimum_refresh_interval || env_integer('MINIMUM_REFRESH_INTERVAL')
+      @minimum_refresh_interval || ENV['MINIMUM_REFRESH_INTERVAL'].to_i
     end
     attr_writer :minimum_refresh_interval
 
     def max_notifications_to_sync
-      @max_notifications_to_sync || env_integer('MAX_NOTIFICATIONS_TO_SYNC', 500)
+      if @max_notifications_to_sync
+        @max_notifications_to_sync
+      elsif ENV['MAX_NOTIFICATIONS_TO_SYNC'].present?
+        ENV['MAX_NOTIFICATIONS_TO_SYNC'].to_i
+      else
+        500
+      end
     end
     attr_writer :max_notifications_to_sync
 
     def max_concurrency
-      @max_concurrency || env_integer('MAX_CONCURRENCY', 10)
+      if @max_concurrency
+        @max_concurrency
+      elsif ENV['MAX_CONCURRENCY'].present?
+        ENV['MAX_CONCURRENCY'].to_i
+      else
+        10
+      end
     end
     attr_writer :max_concurrency
 
-    def background_jobs_enabled
-      @background_jobs_enabled || sidekiq_schedule_enabled? || env_boolean('OCTOBOX_BACKGROUND_JOBS_ENABLED')
+    def background_jobs_enabled?
+      @background_jobs_enabled || sidekiq_schedule_enabled? || ENV['OCTOBOX_BACKGROUND_JOBS_ENABLED'].present?
     end
     attr_writer :background_jobs_enabled
 
     def sidekiq_schedule_enabled?
-      @sidekiq_schedule_enabled || env_boolean('OCTOBOX_SIDEKIQ_SCHEDULE_ENABLED')
+      @sidekiq_schedule_enabled || ENV['OCTOBOX_SIDEKIQ_SCHEDULE_ENABLED'].present?
     end
     attr_writer :sidekiq_schedule_enabled
 
@@ -88,23 +100,26 @@ module Octobox
     attr_writer :sidekiq_schedule_path
 
     def restricted_access_enabled
-      @restricted_access_enabled || env_boolean('RESTRICTED_ACCESS_ENABLED')
+      @restricted_access_enabled || ENV['RESTRICTED_ACCESS_ENABLED'].present?
     end
     attr_writer :restricted_access_enabled
 
     def github_organization_id
-      @github_organization_id || env_integer('GITHUB_ORGANIZATION_ID')
+      id = @github_organization_id || ENV['GITHUB_ORGANIZATION_ID']
+      return id.to_i if id.present?
     end
     attr_writer :github_organization_id
 
     def github_team_id
-      @github_team_id || env_integer('GITHUB_TEAM_ID')
+      id = @github_team_id || ENV['GITHUB_TEAM_ID']
+      return id.to_i if id.present?
     end
     attr_writer :github_team_id
 
     def native_link
       ENV['OCTOBOX_NATIVE_LINK'] || nil
     end
+    attr_writer :native_link
 
     def source_repo
       env_value = ENV['SOURCE_REPO'].blank? ? nil : ENV['SOURCE_REPO']
@@ -115,17 +130,20 @@ module Octobox
     def app_install_url
       "#{app_url}/installations/new"
     end
+    attr_writer :app_install_url
 
     def app_url
       "#{github_domain}/apps/#{app_slug}"
     end
+    attr_writer :app_url
 
     def app_slug
       ENV['GITHUB_APP_SLUG']
     end
+    attr_writer :app_slug
 
     def octobox_io
-      @octobox_io || env_boolean('OCTOBOX_IO')
+      @octobox_io || ENV['OCTOBOX_IO'].present?
     end
     attr_writer :octobox_io
 
@@ -144,16 +162,6 @@ module Octobox
 
       return @admin_github_ids = [] unless admin_github_ids.present?
       @github_admin_ids = admin_github_ids.split(',')
-    end
-
-    private
-
-    def env_boolean(env_var_name)
-      %w(true 1).include?(ENV[env_var_name].try(:downcase))
-    end
-
-    def env_integer(env_var_name, default = nil)
-      ENV[env_var_name].try(:to_i) || default
     end
   end
 end
