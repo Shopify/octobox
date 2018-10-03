@@ -306,10 +306,8 @@ class NotificationsController < ApplicationController
     eager_load_relation = display_subject? ? [{subject: :labels}, {repository: {app_installation: {subscription_purchase: :subscription_plan}}}] : nil
     scope = current_user.notifications.includes(eager_load_relation)
 
-    @search = Search.new(scope: scope, query: params[:q], params: params)
-
     if params[:q].present?
-      scope = @search.results
+      scope = Search.new(scope: scope, query: params[:q]).results
     elsif params[:starred].present?
       scope.starred
     elsif params[:archive].present?
