@@ -34,10 +34,9 @@
 
 .card-notifications {
   margin-bottom: 20px;
-  border-radius: 0;
   .card-header {
+    background: mix($black, $card-bg, 3%);
     padding: 6px 8px;
-    border-radius: 0;
     .pagination{
       margin: 6px 0px 0px;
     }
@@ -45,10 +44,6 @@
   .bold {
     font-weight: bold;
   }
-}
-
-.card-header{
-  background: mix($black, $card-bg, 3%);
 }
 
 .select-all {
