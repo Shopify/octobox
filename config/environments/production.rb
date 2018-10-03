@@ -82,6 +82,4 @@ Rails.application.configure do
   config.active_record.dump_schema_after_migration = false
 
   config.lograge.enabled = true
-
-  config.skylight.probes += %w(redis faraday) if ENV['SKYLIGHT_AUTHENTICATION'].present?
 end
