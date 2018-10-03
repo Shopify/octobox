@@ -20,7 +20,6 @@ class Search
     res = res.assigned(assignee) if assignee.present?
     res = res.starred(starred) unless starred.nil?
     res = res.archived(archived) unless archived.nil?
-    res = res.archived(!inbox) unless inbox.nil?
     res = res.unread(unread) unless unread.nil?
     res = res.bot_author unless bot_author.nil?
     res = res.unlabelled unless unlabelled.nil?
@@ -119,10 +118,6 @@ class Search
 
   def starred
     boolean_prefix(:starred)
-  end
-
-  def inbox
-    boolean_prefix(:inbox)
   end
 
   def archived
