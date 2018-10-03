@@ -31,7 +31,6 @@ gem 'bootsnap', require: false
 gem 'bugsnag'
 gem 'jwt'
 gem 'oj'
-gem 'yard'
 
 # Supported databases
 gem 'mysql2', require: false
