@@ -26,7 +26,7 @@ gem 'sidekiq-unique-jobs'
 gem 'sidekiq-scheduler'
 gem 'rack-canonical-host'
 gem 'sidekiq-status'
-gem 'gemoji', require: false
+gem 'gemoji'
 gem 'bootsnap', require: false
 gem 'bugsnag'
 gem 'jwt'
