@@ -349,16 +349,14 @@ td.keys {
 }
 
 .nav-filters {
-  border-top: 1px solid $nav-divider-color;
-  margin: 4px 0;
-  padding: 4px 0 0;
-
-  &:first-child{
-    margin-top: 0px;
-    padding-top: 0px;
-    border-top: none;
+  .divider {
+    border-top: 1px solid $nav-divider-color;
+    height: 1px;
+    margin: 5px 0;
+    &.double {
+      border-top: 3px double $nav-divider-color;
+    }
   }
-
   > li > a {
     position: relative;
     .badge {
