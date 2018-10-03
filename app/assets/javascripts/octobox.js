@@ -133,31 +133,24 @@ var Octobox = (function() {
     })
   };
 
-  var toggleArchive = function() {
-    if ($(".archive_toggle").hasClass("archive_selected")) {
-      archive()
-    } else {
-      unarchive()
-    }
-  };
-
-  var archive = function(){
-    archiveSelected(true);
-  }
-
-  var unarchive = function(){
-    archiveSelected(false);
-  }
-
-  var archiveSelected = function(value){
+  var toggleArchive = function(button_selected) {
     if (getDisplayedRows().length === 0) return;
+    var cssClass, value;
+    if (button_selected.hasClass("archive_selected")) {
+      cssClass = ".archive"
+      value = true
+    } else {
+      cssClass = ".unarchive"
+      value = false
+    }
+
     var ids = getIdsFromRows(getMarkedOrCurrentRows());
 
     $.post( "/notifications/archive_selected" + location.search, { "id[]": ids, "value": value } ).done(function() {
       resetCursorAfterRowsRemoved(ids);
       updateFavicon();
     });
-  }
+  };
 
   var toggleSelectAll = function() {
     $.map($("button.select_all > span"), function( val, i ) {
@@ -462,8 +455,7 @@ var Octobox = (function() {
     checkAll: checkAll,
     mute: mute,
     markReadSelected: markReadSelected,
-    archive: archive,
-    unarchive: unarchive,
+    toggleArchive: toggleArchive,
     toggleSelectAll: toggleSelectAll,
     sync: sync,
     markRowCurrent: markRowCurrent,
