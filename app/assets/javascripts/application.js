@@ -137,6 +137,9 @@ document.addEventListener("turbolinks:load", function() {
       $(this).toggleClass("star-active star-inactive");
       $.post('/notifications/'+$(this).data('id')+'/star')
     });
+    $('a.js-sync').on('click', function() {
+      $('.js-sync .octicon').toggleClass('spinning')
+    });
     recoverPreviousCursorPosition();
 
     $('.js-select_all').change(function() {
@@ -157,11 +160,6 @@ document.addEventListener("turbolinks:before-cache", function() {
 
 $(document).on('click', '[data-toggle="offcanvas"]', function () {
   $('.flex-content').toggleClass('active')
-});
-
-$(document).on('click', 'a.js-sync', function(e) {
-  e.preventDefault(e);
-  sync()
 });
 
 function enableTooltips() {
@@ -302,8 +300,8 @@ function openCurrentLink(e) {
 }
 
 function refreshOnSync() {
-  if(!$(".js-sync .octicon").hasClass("spinning")){
-    $(".js-sync .octicon").addClass("spinning");
+  if(!$(".sync .octicon").hasClass("spinning")){
+    $(".sync .octicon").addClass("spinning");
   }
 
   jQuery.ajax({'url': "/notifications/syncing.json", data: {}, error: function(xhr, status) {
@@ -331,11 +329,7 @@ function notify(message, type) {
 }
 
 function sync() {
-  if($("a.js-sync.js-async").length) {
-    $.get('/notifications/sync.json?async=true', refreshOnSync);
-  } else {
-    Turbolinks.visit($("a.js-sync").attr('href'))
-  }
+  $("a.js-sync").click();
 }
 
 function autoSync() {
