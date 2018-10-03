@@ -12,7 +12,6 @@ class SyncNotificationsWorker
   def perform(user_id)
     user = User.find_by(id: user_id)
     return unless user.present?
-    return unless user.effective_access_token.present?
 
     Timeout.timeout(TIMEOUT) do
       begin
