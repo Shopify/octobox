@@ -213,13 +213,29 @@ class Notification < ApplicationRecord
     end
   end
 
-  def update_repository(force = false)
-    return unless display_subject?
+  private
 
-    UpdateRepositoryWorker.perform_async_if_configured(self.id, force)
+  def download_subject
+    user.subject_client.get(subject_url)
+
+  # If permissions changed and the user hasn't accepted, we get a 401
+  # We may receive a 403 Forbidden or a 403 Not Available
+  # We may be rate limited and get a 403 as well
+  # We may also get blocked by legal reasons (451)
+  # Regardless of the reason, any client error should be rescued and warned so we don't
+  # end up blocking other syncs
+  rescue Octokit::ClientError => e
+    Rails.logger.warn("\n\n\033[32m[#{Time.now}] WARNING -- #{e.message}\033[0m\n\n")
+    nil
   end
 
-  def update_repository_in_foreground(force = false)
+  def download_repository
+    user.github_client.repository(repository_full_name)
+  rescue Octokit::ClientError => e
+    nil
+  end
+
+  def update_repository
     return unless display_subject?
     return if repository != nil && updated_at - repository.updated_at < 2.seconds
 
@@ -251,27 +267,5 @@ class Notification < ApplicationRecord
         last_synced_at: Time.current
       })
     end
-  end
-
-  private
-
-  def download_subject
-    user.subject_client.get(subject_url)
-
-  # If permissions changed and the user hasn't accepted, we get a 401
-  # We may receive a 403 Forbidden or a 403 Not Available
-  # We may be rate limited and get a 403 as well
-  # We may also get blocked by legal reasons (451)
-  # Regardless of the reason, any client error should be rescued and warned so we don't
-  # end up blocking other syncs
-  rescue Octokit::ClientError => e
-    Rails.logger.warn("\n\n\033[32m[#{Time.now}] WARNING -- #{e.message}\033[0m\n\n")
-    nil
-  end
-
-  def download_repository
-    user.github_client.repository(repository_full_name)
-  rescue Octokit::ClientError => e
-    nil
   end
 end
