@@ -7,8 +7,6 @@ class SyncLabelWorker
   def perform(payload)
     repository = Repository.find_by_github_id(payload['repository']['id'])
     return if repository.nil?
-    return if payload['changes']['name'].nil?
-
     subjects = repository.subjects.label(payload['changes']['name']['from'])
     subjects.each do |subject|
       n = subject.notifications.first
