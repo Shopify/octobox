@@ -45,9 +45,4 @@ module ApplicationHelper
        elastic src-d alphagov vuejs rails algolia
        shopify WordPress golang)
   end
-
-  def current_theme 
-    current_user.try(:theme) || 'light'
-  end
-
 end
