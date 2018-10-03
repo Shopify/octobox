@@ -339,7 +339,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  attr_encrypted
+  attr_encrypted (~> 3.1.0)
   bootsnap
   bootstrap
   brakeman
