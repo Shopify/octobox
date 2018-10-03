@@ -172,7 +172,7 @@ var Octobox = (function() {
 
   var sync = function() {
     if($("a.js-sync.js-async").length) {
-      $.get("/notifications/sync.json", refreshOnSync);
+      $.get("/notifications/sync.json", this.refreshOnSync);
     } else {
       Turbolinks.visit($("a.js-sync").attr("href"))
     }
