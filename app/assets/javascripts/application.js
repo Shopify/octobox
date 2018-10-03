@@ -307,7 +307,7 @@ function refreshOnSync() {
         $(".header-flash-messages").empty();
         notify(data['error'], 'danger')
       } else {
-        Turbolinks.visit("/"+location.search);
+        location.reload();
       }
     }
   });
