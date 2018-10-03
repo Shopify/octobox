@@ -130,7 +130,6 @@ class NotificationTest < ActiveSupport::TestCase
   end
 
   test 'update_from_api_response creates a subject when fetch_subject is enabled' do
-    stub_background_jobs_enabled(value: false)
     stub_fetch_subject_enabled
     stub_repository_request
     url = 'https://api.github.com/repos/octobox/octobox/issues/560'
@@ -164,7 +163,6 @@ class NotificationTest < ActiveSupport::TestCase
   end
 
   test 'update_from_api_response updates the subject if the subject was not recently updated' do
-    stub_background_jobs_enabled(value: false)
     stub_fetch_subject_enabled
     stub_repository_request
     url = 'https://api.github.com/repos/octobox/octobox/issues/560'
@@ -182,8 +180,7 @@ class NotificationTest < ActiveSupport::TestCase
   end
 
   test 'update_from_api_response updates the subject with no author available' do
-    stub_background_jobs_enabled(value: false)
-    stub_fetch_subject_enabled
+    Octobox.config.fetch_subject = true
     stub_repository_request
     url = 'https://api.github.com/repos/octobox/octobox/commits/6dcb09b5b57875f334f61aebed695e2e4193db5e'
     response = { status: 200, body: file_fixture('commit_no_author.json'), headers: { 'Content-Type' => 'application/json' } }
@@ -195,10 +192,12 @@ class NotificationTest < ActiveSupport::TestCase
     assert_difference 'Subject.count' do
       notification.update_from_api_response(api_response, unarchive: true)
     end
+  ensure
+    Octobox.config.fetch_subject = false
   end
 
   test 'update_from_api_response updates the subject that returns a 40x error' do
-    stub_fetch_subject_enabled
+    Octobox.config.fetch_subject = true
     stub_repository_request
     url = 'https://api.github.com/repos/octobox/octobox/commits/6dcb09b5b57875f334f61aebed695e2e4193db5e'
     response = { status: 401, headers: { 'Content-Type' => 'application/json' } }
@@ -210,10 +209,11 @@ class NotificationTest < ActiveSupport::TestCase
     assert_no_difference 'Subject.count' do
       notification.update_from_api_response(api_response, unarchive: true)
     end
+  ensure
+    Octobox.config.fetch_subject = false
   end
 
   test 'updated_from_api_response updates the existing subject if present' do
-    stub_background_jobs_enabled(value: false)
     stub_fetch_subject_enabled
     stub_repository_request
     url = 'https://api.github.com/repos/octobox/octobox/pulls/403'

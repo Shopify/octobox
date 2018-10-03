@@ -99,8 +99,4 @@ module StubHelper
   def stub_fetch_subject_enabled(value: true)
     Octobox.config.stubs(:fetch_subject).returns(value)
   end
-
-  def stub_background_jobs_enabled(value: true)
-    Octobox.config.stubs(:background_jobs_enabled).returns(value)
-  end
 end
