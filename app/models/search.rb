@@ -86,11 +86,11 @@ class Search
   end
 
   def owner
-    parsed_query[:owner]
+    parsed_query[:owner].first
   end
 
   def author
-    parsed_query[:author]
+    parsed_query[:author].first
   end
 
   def unread
@@ -110,11 +110,11 @@ class Search
   end
 
   def label
-    parsed_query[:label]
+    parsed_query[:label].first
   end
 
   def assignee
-    parsed_query[:assignee]
+    parsed_query[:assignee].first
   end
 
   def starred
