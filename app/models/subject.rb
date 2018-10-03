@@ -10,8 +10,6 @@ class Subject < ApplicationRecord
   scope :label, ->(label_name) { joins(:labels).where(Label.arel_table[:name].matches(label_name)) }
   scope :repository, ->(full_name) { where(arel_table[:url].matches("%/repos/#{full_name}/%")) }
 
-  validates :url, presence: true, uniqueness: true
-
   after_update :sync_involved_users
 
   def author_url
