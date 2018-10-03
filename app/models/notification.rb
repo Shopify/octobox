@@ -224,13 +224,13 @@ class Notification < ApplicationRecord
   end
 
   def update_repository(force = false)
-    return unless Octobox.config.subjects_enabled?
+    return unless display_subject?
 
     UpdateRepositoryWorker.perform_async_if_configured(self.id, force)
   end
 
   def update_repository_in_foreground(force = false)
-    return unless Octobox.config.subjects_enabled?
+    return unless display_subject?
     return if repository != nil && updated_at - repository.updated_at < 2.seconds
 
     remote_repository = download_repository
