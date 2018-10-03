@@ -1,5 +1,6 @@
 @import 'variables';
 @import 'bootstrap-custom';
+@import "patterns/blankslate";
 
 $notification-items: (
   'checkbox',
@@ -752,8 +753,4 @@ svg{
 
 .text-large{
   font-size: 16px;
-}
-
-.blur-action {
-  opacity: .5;
 }
