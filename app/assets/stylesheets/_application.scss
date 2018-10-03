@@ -559,38 +559,38 @@ svg{
   fill: $text-muted;
 }
 
-.text-primary, .text-primary svg{
+.text-primary svg{
   fill: theme-color("primary");
 }
 
-.text-success, .text-success svg{
+.text-success svg{
   fill: theme-color("success");
 }
 
-.text-info, .text-info svg{
+.text-info svg{
   fill: theme-color("info");
 }
 
-.text-warning, .text-warning svg{
+.text-warning svg{
   fill: theme-color("warning");
 }
 
-.text-danger, .text-danger svg{
+.text-danger svg{
   fill: theme-color("danger");
 }
-.text-secondary, .text-secondary svg{
+.text-secondary svg{
   fill: theme-color("secondary");
 }
 
-.text-subscribed, .text-subscribed svg{
+.text-subscribed svg{
   fill: $label-subscribed-color;
 }
 
-.text-team_mention, .text-team_mention svg{
+.text-team_mention svg{
   fill: $label-team_mention-color;
 }
 
-.text-security_alert, .text-security_alert svg{
+.text-security_alert svg{
   fill: $label-security_alert-color;
 }
 
@@ -646,7 +646,6 @@ svg{
 .card-notifications {
   margin-bottom: 20px;
   .card-header {
-    background: mix($black, $card-bg, 3%);
     padding: 6px 8px;
     .pagination{
       margin: 6px 0px 0px;
