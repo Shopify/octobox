@@ -266,13 +266,10 @@ var Octobox = (function() {
   var initialize = function() {
     enableKeyboardShortcuts();
     enableTooltips();
-
-    if ($("#help-box").length){
-      updateFavicon();
-      initShiftClickCheckboxes()
-      recoverPreviousCursorPosition();
-      setAutoSyncTimer();
-    }
+    updateFavicon();
+    initShiftClickCheckboxes()
+    recoverPreviousCursorPosition();
+    setAutoSyncTimer();
 
     // Sync Handling
     if($(".js-is_syncing").length){ refreshOnSync() }
