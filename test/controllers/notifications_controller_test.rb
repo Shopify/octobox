@@ -4,7 +4,6 @@ require 'test_helper'
 class NotificationsControllerTest < ActionDispatch::IntegrationTest
   setup do
     Octobox.config.stubs(:github_app).returns(false)
-    stub_background_jobs_enabled(value: false)
     stub_fetch_subject_enabled(value: false)
     stub_notifications_request
     stub_repository_request
@@ -114,6 +113,7 @@ class NotificationsControllerTest < ActionDispatch::IntegrationTest
 
   test 'renders notifications filtered by label' do
     stub_fetch_subject_enabled
+    Octobox.config.stubs(:github_app).returns(false)
     sign_in_as(@user)
 
     get '/'
@@ -288,18 +288,17 @@ class NotificationsControllerTest < ActionDispatch::IntegrationTest
   test 'syncs users notifications' do
     sign_in_as(@user)
 
-    get "/notifications/sync"
+    post "/notifications/sync"
     assert_response :redirect
   end
 
   test 'syncs users notifications async' do
-    stub_background_jobs_enabled
     # Initial sync means we won't enqueue a sync immediately on login
     sign_in_as(@user, initial_sync: true)
     job_id = @user.sync_job_id
 
     inline_sidekiq_status do
-      get "/notifications/sync"
+      post "/notifications/sync?async=true"
       @user.reload
 
       assert_response :redirect
@@ -327,7 +326,7 @@ class NotificationsControllerTest < ActionDispatch::IntegrationTest
     sign_in_as(@user)
     User.any_instance.stubs(:sync_notifications_in_foreground).raises(Octokit::BadGateway)
 
-    get "/notifications/sync"
+    post "/notifications/sync"
     assert_response :redirect
     assert_equal "Having issues connecting to GitHub. Please try again.", flash[:error]
   end
@@ -344,7 +343,7 @@ class NotificationsControllerTest < ActionDispatch::IntegrationTest
     sign_in_as(@user)
     User.any_instance.stubs(:sync_notifications_in_foreground).raises(Octokit::Unauthorized)
 
-    get "/notifications/sync"
+    post "/notifications/sync"
     assert_response :redirect
     assert_equal "Your GitHub token seems to be invalid. Please try again.", flash[:error]
   end
@@ -353,7 +352,7 @@ class NotificationsControllerTest < ActionDispatch::IntegrationTest
     sign_in_as(@user)
     User.any_instance.stubs(:sync_notifications_in_foreground).raises(Octokit::Forbidden)
 
-    get "/notifications/sync"
+    post "/notifications/sync"
     assert_response :redirect
     assert_equal "Your GitHub token seems to be invalid. Please try again.", flash[:error]
   end
@@ -370,7 +369,7 @@ class NotificationsControllerTest < ActionDispatch::IntegrationTest
     sign_in_as(@user)
     User.any_instance.stubs(:sync_notifications_in_foreground).raises(Faraday::ConnectionFailed.new('offline error'))
 
-    get "/notifications/sync"
+    post "/notifications/sync"
     assert_response :redirect
     assert_equal "You seem to be offline. Please try again.", flash[:error]
   end
