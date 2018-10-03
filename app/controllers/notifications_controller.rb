@@ -124,11 +124,7 @@ class NotificationsController < ApplicationController
   #
   def mute_selected
     Notification.mute(selected_notifications)
-    if request.xhr?
-      head :ok
-    else
-      redirect_back fallback_location: root_path
-    end
+    head :ok
   end
 
   # Archive selected notifications
@@ -146,11 +142,7 @@ class NotificationsController < ApplicationController
   #
   def archive_selected
     Notification.archive(selected_notifications, params[:value])
-    if request.xhr?
-      head :ok
-    else
-      redirect_back fallback_location: root_path
-    end
+    head :ok
   end
 
   # Mark selected notifications as read
